@@ -1,12 +1,3 @@
-struct Base {}
-
-impl Base {
-    fn execute() -> i32 {
-        println!("Base executed");
-        0
-    }
-}
-
 struct Minteable {}
 
 impl Minteable {
@@ -25,18 +16,7 @@ impl Burnable {
     }
 }
 
-macro_rules! compose {
-	// ($name:ident($($parent:ident),+) {$($field_name:ident : $field_type:ty),+}) => {
-	// 	#[allow(dead_code)]
-	// 	#[derive(Debug)]
-	// 	struct $name { $($field_name: $field_type),+ }
-	// 	impl $name {
-	// 		fn execute(&self) {
-	// 			let results = [$($parent :: execute()),+];
-	// 			println!("{} executed, internals {:?}, results {:?}", stringify!($name), self, results);
-	// 		}
-	// 	}
-	// };
+macro_rules! define_script {
 	($name:ident($($parent:ident),+) {$($field_name:ident : $field_type:ty),+} $($custom:expr),*) => {
 		#[allow(dead_code)]
 		#[derive(Debug)]
@@ -51,42 +31,37 @@ macro_rules! compose {
 }
 
 fn main() {
-    {
+	{
 		println!("--------------------------------------------------------------------------------");
-        println!("Testing CsdScript(Base)...");
-        compose! { CsdScript(Base) { sample_data: i32 } }
-        let contract = CsdScript { sample_data: 13i32 };
+        println!("Testing MyComposedScript(Minteable)...");
+        // type definition
+        define_script! { MyComposedScript(Minteable) { some_attribute: i32 } }
+        // instantiation
+        let contract = MyComposedScript { some_attribute: 13i32 };
+        // execution
         contract.execute();
     }
 	{
 		println!("--------------------------------------------------------------------------------");
-        println!("Testing CsdScript(Minteable)...");
-        compose! { CsdScript(Minteable) { sample_data: i32 } }
-        let contract = CsdScript { sample_data: 13i32 };
+        println!("Testing MyComposedScript(Minteable,Burnable)...");
+        // type definition
+        define_script! { MyComposedScript(Minteable,Burnable) { some_attribute: i32 } }
+        // instantiation
+        let contract = MyComposedScript { some_attribute: 13i32 };
+        // execution
         contract.execute();
     }
 	{
 		println!("--------------------------------------------------------------------------------");
-        println!("Testing CsdScript(Burnable)...");
-        compose! { CsdScript(Burnable) { sample_data: i32 } }
-        let contract = CsdScript { sample_data: 13i32 };
-        contract.execute();
-    }
-	{
-		println!("--------------------------------------------------------------------------------");
-        println!("Testing CsdScript(Base,Minteable,Burnable)...");
-        compose! { CsdScript(Base,Minteable,Burnable) { sample_data: i32 } }
-        let contract = CsdScript { sample_data: 13i32 };
-        contract.execute();
-    }
-	{
-		println!("--------------------------------------------------------------------------------");
-        println!("Testing CsdScript(Base) |custom| ...");
-        compose! { CsdScript(Base,Minteable,Burnable) { sample_data: i32 } || { 
+        println!("Testing MyComposedScript(Minteable) |custom| ...");
+        // type definition
+        define_script! { MyComposedScript(Minteable) { some_attribute: i32 } || { 
 			println!("Custom executed");
         	1
 		}}
-        let contract = CsdScript { sample_data: 13i32 };
+        // instantiation
+        let contract = MyComposedScript { some_attribute: 13i32 };
+        // execution
         contract.execute();
     }
 	println!("--------------------------------------------------------------------------------");
