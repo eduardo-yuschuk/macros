@@ -1,3 +1,12 @@
+struct Core {}
+
+impl Core {
+    fn execute() -> i32 {
+        println!("Core executed");
+        12
+    }
+}
+
 struct Minteable {}
 
 impl Minteable {
@@ -7,9 +16,9 @@ impl Minteable {
     }
 }
 
-struct Burnable {}
+struct NotBurnable {}
 
-impl Burnable {
+impl NotBurnable {
     fn execute() -> i32 {
         println!("Burnable executed");
         32
@@ -30,6 +39,16 @@ macro_rules! define_script {
 	};
 }
 
+/*
+Core que crea el NFT con un hash
+Agregamos NotBurnable (plugin)
+
+Cambiamos de Burnable a NotBurnable
+Salimos con la primera falla
+
+Pensar que pasaría si queremos bypassear lo que está en el core...!
+*/
+
 fn main() {
 	{
 		println!("--------------------------------------------------------------------------------");
@@ -45,7 +64,7 @@ fn main() {
 		println!("--------------------------------------------------------------------------------");
         println!("Testing MyComposedScript(Minteable,Burnable)...");
         // type definition
-        define_script! { MyComposedScript(Minteable,Burnable) { some_attribute: i32 } }
+        define_script! { MyComposedScript(Core,NotBurnable) { some_attribute: i32 } }
         // instantiation
         let contract = MyComposedScript { some_attribute: 13i32 };
         // execution
