@@ -26,24 +26,24 @@ impl Burnable {
 }
 
 macro_rules! compose {
-	($name:ident($($parent:ident),+) {$($field_name:ident : $field_type:ty),+}) => {
+	// ($name:ident($($parent:ident),+) {$($field_name:ident : $field_type:ty),+}) => {
+	// 	#[allow(dead_code)]
+	// 	#[derive(Debug)]
+	// 	struct $name { $($field_name: $field_type),+ }
+	// 	impl $name {
+	// 		fn execute(&self) {
+	// 			let results = [$($parent :: execute()),+];
+	// 			println!("{} executed, internals {:?}, results {:?}", stringify!($name), self, results);
+	// 		}
+	// 	}
+	// };
+	($name:ident($($parent:ident),+) {$($field_name:ident : $field_type:ty),+} $($custom:expr),*) => {
 		#[allow(dead_code)]
 		#[derive(Debug)]
 		struct $name { $($field_name: $field_type),+ }
 		impl $name {
 			fn execute(&self) {
-				let results = [$($parent :: execute()),+];
-				println!("{} executed, internals {:?}, results {:?}", stringify!($name), self, results);
-			}
-		}
-	};
-	($name:ident($($parent:ident),+) {$($field_name:ident : $field_type:ty),+} $custom:expr) => {
-		#[allow(dead_code)]
-		#[derive(Debug)]
-		struct $name { $($field_name: $field_type),+ }
-		impl $name {
-			fn execute(&self) {
-				let results = [$($parent :: execute()),+, $custom()];
+				let results = [$($parent :: execute()),+$(, $custom())*];
 				println!("{} executed, internals {:?}, results {:?}", stringify!($name), self, results);
 			}
 		}
