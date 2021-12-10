@@ -16,9 +16,9 @@ impl Minteable {
     }
 }
 
-struct NotBurnable {}
+struct Burnable {}
 
-impl NotBurnable {
+impl Burnable {
     fn execute() -> i32 {
         println!("Burnable executed");
         32
@@ -50,38 +50,31 @@ Pensar que pasaría si queremos bypassear lo que está en el core...!
 */
 
 fn main() {
+    // test case #1
 	{
-		println!("--------------------------------------------------------------------------------");
-        println!("Testing MyComposedScript(Minteable)...");
         // type definition
-        define_script! { MyComposedScript(Minteable) { some_attribute: i32 } }
-        // instantiation
-        let contract = MyComposedScript { some_attribute: 13i32 };
-        // execution
+        define_script! { ComposedScript(Core, Minteable) { some_attribute: i32 } }
+        // instantiation and execution
+        let contract = ComposedScript { some_attribute: 13i32 };
         contract.execute();
     }
+    // test case #2
 	{
-		println!("--------------------------------------------------------------------------------");
-        println!("Testing MyComposedScript(Minteable,Burnable)...");
         // type definition
-        define_script! { MyComposedScript(Core,NotBurnable) { some_attribute: i32 } }
-        // instantiation
-        let contract = MyComposedScript { some_attribute: 13i32 };
-        // execution
-        contract.execute();
+        define_script! { ComposedScript(Core, Minteable, Burnable) { some_attribute: i32 } }
+        // instantiation and execution
+        let script = ComposedScript { some_attribute: 13i32 };
+        script.execute();
     }
+    // test case #3
 	{
-		println!("--------------------------------------------------------------------------------");
-        println!("Testing MyComposedScript(Minteable) |custom| ...");
         // type definition
-        define_script! { MyComposedScript(Minteable) { some_attribute: i32 } || { 
-			println!("Custom executed");
-        	1
+        define_script! { ComposedScript(Core, Minteable) { some_attribute: i32 } || { 
+			println!("Custom behavior");
+        	0
 		}}
-        // instantiation
-        let contract = MyComposedScript { some_attribute: 13i32 };
-        // execution
+        // instantiation and execution
+        let contract = ComposedScript { some_attribute: 13i32 };
         contract.execute();
     }
-	println!("--------------------------------------------------------------------------------");
 }
