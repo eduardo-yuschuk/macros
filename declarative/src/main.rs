@@ -26,10 +26,10 @@ impl Burnable {
 }
 
 macro_rules! define_script {
-	($name:ident($($parent:ident),+) {$($field_name:ident : $field_type:ty),+} $($custom:expr),*) => {
+	($name:ident($($parent:ident),+) {$($field_name:ident : $field_type:ty),*} $($custom:expr),*) => {
 		#[allow(dead_code)]
 		#[derive(Debug)]
-		struct $name { $($field_name: $field_type),+ }
+		struct $name { $($field_name: $field_type),* }
 		impl $name {
 			fn execute(&self) {
 				let results = [$($parent :: execute()),+$(, $custom())*];
@@ -53,28 +53,28 @@ fn main() {
     // test case #1
 	{
         // type definition
-        define_script! { ComposedScript(Core, Minteable) { some_attribute: i32 } }
+        define_script! { ComposedScript(Core, Minteable) { } }
         // instantiation and execution
-        let contract = ComposedScript { some_attribute: 13i32 };
+        let contract = ComposedScript { };
         contract.execute();
     }
     // test case #2
 	{
         // type definition
-        define_script! { ComposedScript(Core, Minteable, Burnable) { some_attribute: i32 } }
+        define_script! { ComposedScript(Core, Minteable, Burnable) { sample_attribute: i32 } }
         // instantiation and execution
-        let script = ComposedScript { some_attribute: 13i32 };
+        let script = ComposedScript { sample_attribute: 13i32 };
         script.execute();
     }
     // test case #3
 	{
         // type definition
-        define_script! { ComposedScript(Core, Minteable) { some_attribute: i32 } || { 
+        define_script! { ComposedScript(Core, Minteable) { } || { 
 			println!("Custom behavior");
         	0
 		}}
         // instantiation and execution
-        let contract = ComposedScript { some_attribute: 13i32 };
+        let contract = ComposedScript { };
         contract.execute();
     }
 }
