@@ -1,0 +1,5 @@
+[workspace]
+members = [
+    "function_macro",
+    "function_usage",
+]
