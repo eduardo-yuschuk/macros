@@ -30,8 +30,9 @@ pub fn derive(input: TokenStream) -> TokenStream {
     // let select_string = format!("select {} from {};", &columns, &entity.name);
 
     let result = quote! {
-        impl #ident {
-        }
+        id: i32,
+        //impl #ident {
+        //}
     };
     result.into()
 }
